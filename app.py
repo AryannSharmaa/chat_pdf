@@ -18,7 +18,6 @@ def get_pdf_text(pdf_docs):
 
     return text
 
-
 def get_text_chunks(raw_text):
     text_splitter=CharacterTextSplitter(
         separator="\n",
@@ -30,7 +29,6 @@ def get_text_chunks(raw_text):
     chunks=text_splitter.split_text(raw_text)
     return chunks
 
-
 def get_vectorstore(text_chunks):
     model_name = "BAAI/bge-small-en"
     model_kwargs = {'device': 'cuda'}
@@ -40,7 +38,6 @@ def get_vectorstore(text_chunks):
     encode_kwargs=encode_kwargs)
     vectorstore=FAISS.from_texts(texts=text_chunks,embedding=embeddings)
     return vectorstore
-
 
 def get_conversation_chain(vectorstore):
     llm = HuggingFaceHub(repo_id="google/flan-t5-xxl", model_kwargs={"temperature":0.7, "max_length":512})
@@ -76,30 +73,22 @@ def main():
     user_question=st.text_input("Ask question about your document:")
     if user_question:
         handle_userinput(user_question)
-
-    
-
     with st.sidebar:
         st.subheader("Your Documents")
         pdf_docs=st.file_uploader("Upload your PDFs here and Click on 'Process'",accept_multiple_files=True)
         if st.button("Process"):
-            with st.spinner("Processing"):
+            with st.spinner("Processing"):   
                 # get pdf text
                 raw_text=get_pdf_text(pdf_docs)
                 
-
                 # get text chunks
                 text_chunks=get_text_chunks(raw_text)
                 st.write(text_chunks)
                 
-
                 #create vectore store
-
                 vectorstore=get_vectorstore(text_chunks)
-                
 
                 # create conversation chain
-
                 st.session_state.conversation=get_conversation_chain(vectorstore)
     
 
